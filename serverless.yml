@@ -1,0 +1,38 @@
+---
+service: realtime-chat
+
+frameworkVersion: ">=1.21.0 <2.0.0"
+
+plugins:
+  - serverless-appsync-plugin
+
+provider:
+  name: aws
+  region: eu-west-1
+
+custom:
+  awsAccountId: ${env:AWS_ACCOUNT_ID}
+  appSync:
+    name: realtimeChat
+    apiKey: ${env:APPSYNC_API_KEY}
+    apiId: ${env:APPSYNC_API_ID}
+    authenticationType: API_KEY
+    schema: schema/schema.graphql
+    serviceRole: "AppSyncServiceRole" # AppSyncServiceRole is a role defined by amazon and available in all accounts
+    mappingTemplatesLocation: mapping-templates
+    mappingTemplates:
+      - dataSource: Chat
+        type: Mutation
+        field: message
+        request: Message.request.vtl
+        response: ForwardResult.response.vtl
+      - dataSource: Chat
+        type: Subscription
+        field: inbox
+        request: Message.request.vtl
+        response: ForwardResult.response.vtl
+    dataSources:
+      # https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-local-resolvers.html
+      - type: NONE  # use an AppSync local resolver
+        name: Chat
+        description: 'Paging forwarder'

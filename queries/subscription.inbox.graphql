@@ -1,0 +1,8 @@
+subscription Inbox {
+    inbox(to: "Bobby") {
+        body
+        to
+        from
+        sentAt
+    }
+}

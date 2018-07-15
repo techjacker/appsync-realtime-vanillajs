@@ -1,0 +1,8 @@
+mutation Message {
+    message(to: "Bobby", body: "Yo!") {
+        body
+        to
+        from
+        sentAt
+    }
+}
